@@ -76,19 +76,21 @@ sessionStartCredits()
     <div mx-auto w-md space-y-5>
       <div> Session Credit: {{ sessionCredit }}</div>
       <div v-if="signs.length" bg-gray-100 p-5>
-        <table class="w-md  rounded">
-          <tr>
-            <td ref="row1" text-5xl font-bold>
-              {{ isLetter1Spinnning ? 'X' : signs[0] }}
-            </td>
-            <td ref="row2" text-5xl font-bold>
-              {{ isLetter2Spinnning ? 'X' : signs[1] }}
-            </td>
-            <td ref="row3" text-5xl font-bold>
-              {{ isLetter3Spinnning ? 'X' : signs[2] }}
-            </td>
-          </tr>
-        </table>
+        <client-only>
+          <table class="w-md  rounded">
+            <tr>
+              <td ref="row1" text-5xl font-bold>
+                {{ isLetter1Spinnning ? 'X' : signs[0] }}
+              </td>
+              <td ref="row2" text-5xl font-bold>
+                {{ isLetter2Spinnning ? 'X' : signs[1] }}
+              </td>
+              <td ref="row3" text-5xl font-bold>
+                {{ isLetter3Spinnning ? 'X' : signs[2] }}
+              </td>
+            </tr>
+          </table>
+        </client-only>
       </div>
 
       <div m-5 space-x-10>
