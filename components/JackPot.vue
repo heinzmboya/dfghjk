@@ -21,9 +21,13 @@ const addSpin = async () => {
   let data
   if (isLetter1Spinnning) {
     removeSpin(row1.value, 1000, async () => {
-      isLetter1Spinnning = false
-      data = await $fetch('/api/jackpot')
+      data = await $fetch('/api/jackpot', {
+        method: 'post',
+        body: { spin: true },
+      })
       signs.value = data.letters
+
+      isLetter1Spinnning = false
     })
     removeSpin(row2.value, 2000, () => isLetter2Spinnning = false)
     // eslint-disable-next-line @typescript-eslint/no-use-before-define
@@ -45,9 +49,7 @@ const addSpin = async () => {
 }
 
 const setCredit = (credits) => {
-  if (signs.value[0] === signs.value[1] && signs.value[1] === signs.value[2])
-
-    sessionCredit = credits
+  sessionCredit = credits
 }
 
 const randomDirection = () => {
@@ -58,13 +60,22 @@ const randomDirection = () => {
 
   ball.style.left = `${rect.left + (plusOrMinus * 300)}px`
 }
+
+async function sessionStartCredits() {
+  const data = await $fetch('/api/jackpot', {
+    method: 'POST',
+  })
+  sessionCredit = data.credits
+}
+
+sessionStartCredits()
 </script>
 
 <template>
   <div>
     <div mx-auto w-md space-y-5>
       <div> Session Credit: {{ sessionCredit }}</div>
-      <div bg-gray-100 p-5>
+      <div v-if="signs.length" bg-gray-100 p-5>
         <table class="w-md  rounded">
           <tr>
             <td ref="row1" text-5xl font-bold>
