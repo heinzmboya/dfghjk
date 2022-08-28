@@ -17,23 +17,17 @@ const removeSpin = (element: HTMLElement | null, time, spinState) => {
   }, time)
 }
 
-const generateLetters = (length = 3) => {
-  let result = ''
-  const characters = 'CLOW'
-  const charactersLength = characters.length
-  for (let i = 0; i < length; i++) {
-    result += characters.charAt(Math.floor(Math.random()
-        * charactersLength))
-  }
-  signs.value = result.split('')
-}
-
-const addSpin = () => {
+const addSpin = async () => {
+  let data
   if (isLetter1Spinnning) {
-    removeSpin(row1.value, 1000, () => { isLetter1Spinnning = false; generateLetters() })
+    removeSpin(row1.value, 1000, async () => {
+      isLetter1Spinnning = false
+      data = await $fetch('/api/jackpot')
+      signs.value = data.letters
+    })
     removeSpin(row2.value, 2000, () => isLetter2Spinnning = false)
     // eslint-disable-next-line @typescript-eslint/no-use-before-define
-    removeSpin(row3.value, 3000, () => { isLetter3Spinnning = false; setCredit() }) // 10 - amt from server
+    removeSpin(row3.value, 3000, () => { isLetter3Spinnning = false; setCredit(data.credits) })
     return
   }
 
@@ -50,10 +44,10 @@ const addSpin = () => {
   }, 1000)
 }
 
-const setCredit = () => {
+const setCredit = (credits) => {
   if (signs.value[0] === signs.value[1] && signs.value[1] === signs.value[2])
 
-    sessionCredit = 10
+    sessionCredit = credits
 }
 
 const randomDirection = () => {
@@ -63,7 +57,6 @@ const randomDirection = () => {
   const rect = ball.getBoundingClientRect()
 
   ball.style.left = `${rect.left + (plusOrMinus * 300)}px`
-  // ball.style.top = `${ball.style.top + plusOrMinus * 300}px`
 }
 </script>
 
@@ -89,7 +82,7 @@ const randomDirection = () => {
 
       <div m-5 space-x-10>
         <button @click="addSpin">
-          {{ isLetter3Spinnning ? 'Spinning...' : 'Start game' }}
+          {{ isLetter3Spinnning ? 'Spinning...' : 'Roll slots' }}
         </button>
 
         <button class="random" bg-gray-200 font-bold px-2 py-1 rounded absolute @mouseover="randomDirection">
