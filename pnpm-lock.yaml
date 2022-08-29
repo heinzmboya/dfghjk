@@ -7,6 +7,7 @@ specifiers:
   '@nuxtjs/color-mode': ^3.1.4
   '@pinia/nuxt': ^0.4.1
   '@unocss/nuxt': ^0.45.12
+  '@vitejs/plugin-vue': ^3.0.3
   '@vueuse/nuxt': ^9.1.1
   eslint: ^8.22.0
   nuxt: ^3.0.0-rc.8
@@ -21,6 +22,7 @@ devDependencies:
   '@nuxtjs/color-mode': 3.1.4
   '@pinia/nuxt': 0.4.1_typescript@4.7.4
   '@unocss/nuxt': 0.45.12
+  '@vitejs/plugin-vue': 3.0.3
   '@vueuse/nuxt': 9.1.1
   eslint: 8.22.0
   nuxt: 3.0.0-rc.8
@@ -1411,6 +1413,14 @@ packages:
       vue: 3.2.37
     transitivePeerDependencies:
       - supports-color
+    dev: true
+
+  /@vitejs/plugin-vue/3.0.3:
+    resolution: {integrity: sha512-U4zNBlz9mg+TA+i+5QPc3N5lQvdUXENZLO2h0Wdzp56gI1MWhqJOv+6R+d4kOzoaSSq6TnGPBdZAXKOe4lXy6g==}
+    engines: {node: ^14.18.0 || >=16.0.0}
+    peerDependencies:
+      vite: ^3.0.0
+      vue: ^3.2.25
     dev: true
 
   /@vitejs/plugin-vue/3.0.3_vite@3.0.9+vue@3.2.37:
