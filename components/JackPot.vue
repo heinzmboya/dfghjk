@@ -46,7 +46,7 @@ async function sessionStartCredits(state = false) {
 }
 
 tableIsLoading = true
-await sessionStartCredits() // allocate 10 credits on game start
+await sessionStartCredits() // allocate 10 credits on game launch
 
 onMounted(() => {
   tableIsLoading = false
@@ -69,7 +69,7 @@ onMounted(() => {
       <div m-5 space-x-10>
         <button
           v-if="sessionCredit" bg-gray-100 rounded px-3 py-1 w-30 hover-bg-gray-200
-          @click="GameTableRef?.isSpinning ? null : startRolling()"
+          @click="startRolling"
         >
           {{ GameTableRef?.isSpinning ? 'rolling...' : 'Roll slots' }}
         </button>

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ref } from 'vue'
 interface Props {
   signs: Array<string>
 }
@@ -49,7 +50,7 @@ defineExpose({
 
 <template>
   <client-only>
-    <table class="w-md  rounded">
+    <table class="w-md rounded">
       <tr>
         <td ref="col1" text-5xl font-bold class="w-1/3">
           {{ isLetter1Spinnning ? 'X' : signs[0] }}
