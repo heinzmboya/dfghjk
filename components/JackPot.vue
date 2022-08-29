@@ -1,5 +1,6 @@
 <script setup lang="ts">
 let sessionCredit = $ref(0)
+let userAccount = $ref(0)
 let isLetter1Spinnning = $ref(false)
 let isLetter2Spinnning = $ref(false)
 let isLetter3Spinnning = $ref(false)
@@ -53,12 +54,41 @@ const setCredit = (credits) => {
 }
 
 const randomDirection = () => {
+  const random = Math.random()
+  if (random > 0.5)
+    return // 50% chance it moves
+
   const plusOrMinus = Math.random() < 0.5 ? -1 : 1
-  const ball: any = document.querySelector('.random')
+  const btn: any = document.querySelector('.random')
 
-  const rect = ball.getBoundingClientRect()
+  const rect = btn.getBoundingClientRect() // current position
 
-  ball.style.left = `${rect.left + (plusOrMinus * 300)}px`
+  // const height = document.documentElement.clientHeight
+  const width = document.documentElement.clientWidth
+
+  let newPosition = (rect.left + (plusOrMinus * 300))
+  if (newPosition > width)
+    newPosition = width - 300
+
+  if (newPosition < 0)
+    newPosition = 300
+
+  // btn.style.transform = `translate(${newPosition}px)`
+
+  btn.style.left = `${newPosition}px`
+}
+
+async function cashOut() {
+  const random = Math.random()
+  if (random < 0.4)
+    return // 40% chance it clicks
+
+  const data = await $fetch<{ account: number; credits: number }>('/api/jackpot', {
+    method: 'post',
+    body: { cashOut: true },
+  })
+  userAccount = data.account
+  sessionCredit = data.credits
 }
 
 async function sessionStartCredits(state = false) {
@@ -75,18 +105,19 @@ sessionStartCredits()
 <template>
   <div>
     <div mx-auto w-md space-y-5>
+      <div> Account: {{ userAccount }}</div>
       <div> Session Credit: {{ sessionCredit }}</div>
       <div v-if="signs.length" bg-gray-100 p-5>
         <client-only>
           <table class="w-md  rounded">
             <tr>
-              <td ref="col1" text-5xl font-bold>
+              <td ref="col1" text-5xl font-bold class="w-1/3">
                 {{ isLetter1Spinnning ? 'X' : signs[0] }}
               </td>
-              <td ref="col2" text-5xl font-bold>
+              <td ref="col2" text-5xl font-bold class="w-1/3">
                 {{ isLetter2Spinnning ? 'X' : signs[1] }}
               </td>
-              <td ref="col3" text-5xl font-bold>
+              <td ref="col3" text-5xl font-bold class="w-1/3">
                 {{ isLetter3Spinnning ? 'X' : signs[2] }}
               </td>
             </tr>
@@ -95,7 +126,10 @@ sessionStartCredits()
       </div>
 
       <div m-5 space-x-10>
-        <button v-if="sessionCredit" bg-gray-100 rounded px-2 py-1 hover-bg-gray-200 @click="isLetter3Spinnning ? null : startRolling()">
+        <button
+          v-if="sessionCredit" bg-gray-100 rounded px-2 py-1 hover-bg-gray-200
+          @click="isLetter3Spinnning ? null : startRolling()"
+        >
           {{ isLetter3Spinnning ? 'Spinning...' : 'Roll slots' }}
         </button>
 
@@ -103,7 +137,10 @@ sessionStartCredits()
           New Session
         </button>
 
-        <button class="random" bg-gray-200 font-bold px-2 py-1 rounded absolute @mouseover="randomDirection">
+        <button
+          class="random" z-10 bg-gray-200 font-bold px-2 py-1 rounded absolute @click="cashOut"
+          @mouseover="randomDirection"
+        >
           CASH OUT
         </button>
       </div>

@@ -73,7 +73,7 @@ export default defineEventHandler(async (event) => {
   if (cashOut) {
     account = account + credits
     credits = 0
-    return { account }
+    return { account, credits }
   }
 
   if (spin) {
