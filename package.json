@@ -6,7 +6,9 @@
     "dev": "nuxi dev",
     "start": "node .output/server/index.mjs",
     "lint": "eslint .",
-    "postinstall": "nuxi prepare"
+    "postinstall": "nuxi prepare",
+    "test": "vitest --run --reporter verbose --globals",
+    "test:watch": "vitest --reporter verbose --globals"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^0.26.1",
@@ -19,6 +21,7 @@
     "eslint": "^8.22.0",
     "nuxt": "^3.0.0-rc.8",
     "pinia": "^2.0.20",
-    "typescript": "^4.7.4"
+    "typescript": "^4.7.4",
+    "vitest": "^0.22.1"
   }
 }
