@@ -81,7 +81,7 @@ const randomDirection = () => {
 async function cashOut() {
   const random = Math.random()
   if (random < 0.4)
-    return // 40% chance it clicks
+    return // 40% chance it doesnt click
 
   const data = await $fetch<{ account: number; credits: number }>('/api/jackpot', {
     method: 'post',

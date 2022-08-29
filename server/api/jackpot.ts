@@ -86,6 +86,7 @@ export default defineEventHandler(async (event) => {
       const reRollWin = await checkWinningRoll(letters)
       if (reRollWin)
         await setCredit()
+      else credits--
     }
     else { credits-- }
 
