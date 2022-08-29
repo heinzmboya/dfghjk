@@ -93,5 +93,5 @@ export default defineEventHandler(async (event) => {
     return { credits, letters }
   }
 
-  return { credits }
+  return { credits, account }
 })

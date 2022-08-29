@@ -53,36 +53,7 @@ const setCredit = (credits) => {
   sessionCredit = credits
 }
 
-const randomDirection = () => {
-  const random = Math.random()
-  if (random > 0.5)
-    return // 50% chance it moves
-
-  const plusOrMinus = Math.random() < 0.5 ? -1 : 1
-  const btn: any = document.querySelector('.random')
-
-  const rect = btn.getBoundingClientRect() // current position
-
-  // const height = document.documentElement.clientHeight
-  const width = document.documentElement.clientWidth
-
-  let newPosition = (rect.left + (plusOrMinus * 300))
-  if (newPosition > width)
-    newPosition = width - 300
-
-  if (newPosition < 0)
-    newPosition = 300
-
-  // btn.style.transform = `translate(${newPosition}px)`
-
-  btn.style.left = `${newPosition}px`
-}
-
 async function cashOut() {
-  const random = Math.random()
-  if (random < 0.4)
-    return // 40% chance it doesnt click
-
   const data = await $fetch<{ account: number; credits: number }>('/api/jackpot', {
     method: 'post',
     body: { cashOut: true },
@@ -92,14 +63,15 @@ async function cashOut() {
 }
 
 async function sessionStartCredits(state = false) {
-  const data = await $fetch<{ credits: number }>('/api/jackpot', {
+  const data = await $fetch<{ account: number; credits: number }>('/api/jackpot', {
     method: 'post',
     body: { newSession: state },
   })
   sessionCredit = data.credits
+  userAccount = data.account
 }
 
-sessionStartCredits()
+sessionStartCredits() // allocate 10 credits on game start
 </script>
 
 <template>
@@ -137,12 +109,7 @@ sessionStartCredits()
           New Session
         </button>
 
-        <button
-          class="random" z-10 bg-gray-200 font-bold px-2 py-1 rounded absolute @click="cashOut"
-          @mouseover="randomDirection"
-        >
-          CASH OUT
-        </button>
+        <cashout-button :cash-out="cashOut" />
       </div>
     </div>
   </div>
