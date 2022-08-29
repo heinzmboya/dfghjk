@@ -1,57 +1,29 @@
 <script setup lang="ts">
 let sessionCredit = $ref(0)
 let userAccount = $ref(0)
-let isLetter1Spinnning = $ref(false)
-let isLetter2Spinnning = $ref(false)
-let isLetter3Spinnning = $ref(false)
-let pageIsLoading = $ref(false)
+let tableIsLoading = $ref(false)
 
-const col1 = ref<HTMLElement | null>(null)
-const col2 = ref<HTMLElement | null>(null)
-const col3 = ref<HTMLElement | null>(null)
+const GameTableRef = ref<{ startRollingAnimation: Function; stopRolling: Function; isSpinning: boolean } | null>(null)
 
 const signs = ref(['C', 'L', 'O'])
 
-const removeSpin = (element: HTMLElement | null, time, spinState) => {
-  setTimeout(() => {
-    element?.classList.remove('animate-spin')
-    spinState()
-  }, time)
+const setCredit = (credits) => {
+  sessionCredit = credits
 }
 
 const startRolling = async () => {
-  let data
-  if (isLetter1Spinnning) {
-    data = await $fetch('/api/jackpot', {
-      method: 'post',
-      body: { spin: true },
-    })
-    signs.value = data.letters
-
-    removeSpin(col1.value, 1000, async () => {
-      isLetter1Spinnning = false
-    })
-    removeSpin(col2.value, 2000, () => isLetter2Spinnning = false)
-    // eslint-disable-next-line @typescript-eslint/no-use-before-define
-    removeSpin(col3.value, 3000, () => { isLetter3Spinnning = false; setCredit(data.credits) })
+  if (GameTableRef.value?.isSpinning)
     return
-  }
 
-  isLetter1Spinnning = true
-  isLetter2Spinnning = true
-  isLetter3Spinnning = true
+  GameTableRef.value?.startRollingAnimation()
 
-  col1.value?.classList.add('animate-spin')
-  col2.value?.classList.add('animate-spin')
-  col3.value?.classList.add('animate-spin')
+  const data = await $fetch<{ letters: Array<string>; credits: number }>('/api/jackpot', {
+    method: 'post',
+    body: { spin: true },
+  })
+  signs.value = data.letters
 
-  setTimeout(() => {
-    startRolling()
-  }, 0)
-}
-
-const setCredit = (credits) => {
-  sessionCredit = credits
+  GameTableRef.value?.stopRolling(() => setCredit(data.credits))
 }
 
 async function cashOut() {
@@ -70,46 +42,36 @@ async function sessionStartCredits(state = false) {
   })
   sessionCredit = data.credits
   userAccount = data.account
-  pageIsLoading = false
+  // tableIsLoading = false
 }
 
-pageIsLoading = true
-sessionStartCredits() // allocate 10 credits on game start
+tableIsLoading = true
+await sessionStartCredits() // allocate 10 credits on game start
+
+onMounted(() => {
+  tableIsLoading = false
+})
 </script>
 
 <template>
   <div mx-auto w-md space-y-5>
-    <div v-if="pageIsLoading" op50 italic>
-      <span animate-pulse>Game Loading...</span>
-    </div>
-
-    <div v-else>
+    <div>
       <div> Account: {{ userAccount }}</div>
       <div> Session Credit: {{ sessionCredit }}</div>
       <div v-if="signs.length" bg-gray-100 p-5>
-        <client-only>
-          <table class="w-md  rounded">
-            <tr>
-              <td ref="col1" text-5xl font-bold class="w-1/3">
-                {{ isLetter1Spinnning ? 'X' : signs[0] }}
-              </td>
-              <td ref="col2" text-5xl font-bold class="w-1/3">
-                {{ isLetter2Spinnning ? 'X' : signs[1] }}
-              </td>
-              <td ref="col3" text-5xl font-bold class="w-1/3">
-                {{ isLetter3Spinnning ? 'X' : signs[2] }}
-              </td>
-            </tr>
-          </table>
-        </client-only>
+        <div v-if="tableIsLoading" op50k italic>
+          <span animate-pulse>Loading table...</span>
+        </div>
+
+        <game-table v-else ref="GameTableRef" :signs="signs" />
       </div>
 
       <div m-5 space-x-10>
         <button
-          v-if="sessionCredit" bg-gray-100 rounded px-2 py-1 hover-bg-gray-200
-          @click="isLetter3Spinnning ? null : startRolling()"
+          v-if="sessionCredit" bg-gray-100 rounded px-3 py-1 w-30 hover-bg-gray-200
+          @click="GameTableRef?.isSpinning ? null : startRolling()"
         >
-          {{ isLetter3Spinnning ? 'Spinning...' : 'Roll slots' }}
+          {{ GameTableRef?.isSpinning ? 'rolling...' : 'Roll slots' }}
         </button>
 
         <button v-else bg-gray-100 rounded px-2 py-1 hover-bg-gray-200 @click="sessionStartCredits(true)">
