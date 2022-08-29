@@ -4,6 +4,7 @@ let userAccount = $ref(0)
 let isLetter1Spinnning = $ref(false)
 let isLetter2Spinnning = $ref(false)
 let isLetter3Spinnning = $ref(false)
+let pageIsLoading = $ref(false)
 
 const col1 = ref<HTMLElement | null>(null)
 const col2 = ref<HTMLElement | null>(null)
@@ -69,14 +70,20 @@ async function sessionStartCredits(state = false) {
   })
   sessionCredit = data.credits
   userAccount = data.account
+  pageIsLoading = false
 }
 
+pageIsLoading = true
 sessionStartCredits() // allocate 10 credits on game start
 </script>
 
 <template>
-  <div>
-    <div mx-auto w-md space-y-5>
+  <div mx-auto w-md space-y-5>
+    <div v-if="pageIsLoading" op50 italic>
+      <span animate-pulse>Game Loading...</span>
+    </div>
+
+    <div v-else>
       <div> Account: {{ userAccount }}</div>
       <div> Session Credit: {{ sessionCredit }}</div>
       <div v-if="signs.length" bg-gray-100 p-5>

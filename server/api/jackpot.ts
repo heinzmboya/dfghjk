@@ -67,7 +67,7 @@ export default defineEventHandler(async (event) => {
 
   if (newSession) {
     credits = 10
-    return { credits }
+    return { credits, account }
   }
 
   if (cashOut) {
