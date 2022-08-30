@@ -1,13 +1,8 @@
 <script setup lang="ts">
-import { ref } from 'vue'
 interface Props {
   signs: Array<string>
 }
 const { signs } = defineProps<Props>()
-
-const col1 = ref<HTMLElement | null>(null)
-const col2 = ref<HTMLElement | null>(null)
-const col3 = ref<HTMLElement | null>(null)
 
 let isLetter1Spinnning = $ref(false)
 let isLetter2Spinnning = $ref(false)
@@ -17,28 +12,22 @@ const startRollingAnimation = async () => {
   isLetter1Spinnning = true
   isLetter2Spinnning = true
   isLetter3Spinnning = true
-
-  col1.value?.classList.add('animate-spin')
-  col2.value?.classList.add('animate-spin')
-  col3.value?.classList.add('animate-spin')
 }
 
-const removeSpin = (element: HTMLElement | null, time, spinState) => {
-  setTimeout(() => {
-    element?.classList.remove('animate-spin')
-    spinState()
-  }, time)
+const timeout = (delay: number) => {
+  return new Promise(resolve => setTimeout(resolve, delay))
 }
 
-const stopRolling = async (setCreditFn) => {
-  removeSpin(col1.value, 1000, async () => {
-    isLetter1Spinnning = false
-  })
-  removeSpin(col2.value, 2000, () => isLetter2Spinnning = false)
-  removeSpin(col3.value, 3000, () => {
-    isLetter3Spinnning = false
-    setCreditFn()
-  })
+const stopRolling = async (setCreditFn: () => void) => {
+  await timeout(1000)
+  isLetter1Spinnning = false
+
+  await timeout(1000)
+  isLetter2Spinnning = false
+
+  await timeout(1000)
+  isLetter3Spinnning = false
+  setCreditFn()
 }
 
 defineExpose({
@@ -50,16 +39,28 @@ defineExpose({
 
 <template>
   <client-only>
-    <table class="w-md rounded">
+    <table class="w-full rounded h-48 shadow-md">
       <tr>
-        <td ref="col1" text-5xl font-bold class="w-1/3">
-          {{ isLetter1Spinnning ? 'X' : signs[0] }}
+        <td text-9xl font-bold class="w-1/3">
+          <div
+            v-if="isLetter1Spinnning"
+            class="spinner-div border-y-4 border-solid border-yellow-500 border-t-transparent"
+          />
+          <div v-else>
+            {{ signs[0] }}
+          </div>
         </td>
-        <td ref="col2" text-5xl font-bold class="w-1/3">
-          {{ isLetter2Spinnning ? 'X' : signs[1] }}
+        <td text-9xl font-bold class="w-1/3">
+          <div v-if="isLetter2Spinnning" class="spinner-div border-y-4 border-blue-500 border-t-transparent" />
+          <div v-else>
+            {{ signs[1] }}
+          </div>
         </td>
-        <td ref="col3" text-5xl font-bold class="w-1/3">
-          {{ isLetter3Spinnning ? 'X' : signs[2] }}
+        <td text-9xl font-bold class="w-1/3">
+          <div v-if="isLetter3Spinnning" class="spinner-div border-y-4 border-green-500 border-t-transparent" />
+          <div v-else>
+            {{ signs[2] }}
+          </div>
         </td>
       </tr>
     </table>

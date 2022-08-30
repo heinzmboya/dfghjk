@@ -54,32 +54,37 @@ onMounted(() => {
 </script>
 
 <template>
-  <div mx-auto w-md space-y-5>
-    <div>
-      <div> Account: {{ userAccount }}</div>
-      <div> Session Credit: {{ sessionCredit }}</div>
-      <div v-if="signs.length" bg-gray-100 p-5>
-        <div v-if="tableIsLoading" op50k italic>
-          <span animate-pulse>Loading table...</span>
-        </div>
-
-        <game-table v-else ref="GameTableRef" :signs="signs" />
+  <div mx-auto w-xl space-y-5 text-gray-600>
+    <div font-bold flex space-x-20>
+      <div flex items-center space-x-3>
+        <div i-twemoji:money-bag w-5 h-5 />
+        <div>Account: {{ userAccount }}</div>
+      </div>
+      <div flex items-center space-x-3>
+        <div i-twemoji:credit-card w-5 h-5 />
+        <div>Session Credit: {{ sessionCredit }}</div>
+      </div>
+    </div>
+    <div v-if="signs.length" bg-gray-100 p-5 rounded-lg>
+      <div v-if="tableIsLoading" op50k italic w-xl>
+        <span animate-pulse>Loading table...</span>
       </div>
 
-      <div m-5 space-x-10>
-        <button
-          v-if="sessionCredit" bg-gray-100 rounded px-3 py-1 w-30 hover-bg-gray-200
-          @click="startRolling"
-        >
-          {{ GameTableRef?.isSpinning ? 'rolling...' : 'Roll slots' }}
-        </button>
+      <game-table v-else ref="GameTableRef" :signs="signs" />
+    </div>
 
-        <button v-else bg-gray-100 rounded px-2 py-1 hover-bg-gray-200 @click="sessionStartCredits(true)">
-          New Session
-        </button>
+    <div m-5 space-y-4>
+      <button v-if="sessionCredit" bg-gray-100 rounded px-3 py-1 w-30 hover-bg-gray-200 flex items-center @click="startRolling">
+        <div i-twemoji:round-pushpin mr-2 />
+        {{ GameTableRef?.isSpinning ? 'rolling...' : 'Roll slots' }}
+      </button>
 
-        <cashout-button :cash-out="cashOut" />
-      </div>
+      <button v-else bg-gray-100 rounded px-2 py-1 hover-bg-gray-200 flex items-center @click="sessionStartCredits(true)">
+        <div i-twemoji:new-button mr-2 />
+        New Session
+      </button>
+
+      <cashout-button :cash-out="cashOut" />
     </div>
   </div>
 </template>
