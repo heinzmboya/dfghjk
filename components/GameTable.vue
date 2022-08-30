@@ -62,7 +62,7 @@ defineExpose({
           />
           <div v-else>
             <div :class="sign.svg" mx-auto text-9xl />
-            <span text-xs font-light>{{ signLetters[i] }}</span>
+            <!-- <span text-xs font-light>{{ signLetters[i] }}</span> -->
           </div>
         </td>
       </tr>
