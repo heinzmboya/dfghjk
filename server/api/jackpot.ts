@@ -1,3 +1,5 @@
+import { checkWinningRoll } from '~/composables/globals'
+
 let credits = 10
 let account = 0
 let letters = []
@@ -30,10 +32,6 @@ const testForReroll = async () => {
   }
 
   return letters
-}
-
-const checkWinningRoll = async (incomingLetters) => {
-  return incomingLetters[0] === incomingLetters[1] && incomingLetters[1] === incomingLetters[2]
 }
 
 const setCredit = async () => {

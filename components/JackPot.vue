@@ -26,7 +26,7 @@ const startRolling = async () => {
   GameTableRef.value?.stopRolling(data.letters, () => setCredit(data.credits))
 }
 
-async function cashOut() {
+const cashOut = async () => {
   const data = await $fetch<{ account: number; credits: number }>('/api/jackpot', {
     method: 'post',
     body: { cashOut: true },
@@ -35,7 +35,7 @@ async function cashOut() {
   sessionCredit = data.credits
 }
 
-async function sessionStartCredits(state = false) {
+const sessionStartCredits = async (state = false) => {
   const data = await $fetch<{ account: number; credits: number }>('/api/jackpot', {
     method: 'post',
     body: { newSession: state },
@@ -54,7 +54,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div mx-auto w-xl space-y-5 text-gray-600>
+  <div mx-auto w-xl space-y-5 text-gray-100>
     <div font-bold flex items-center space-x-20>
       <div flex items-center space-x-3>
         <div i-fluent-emoji:money-bag w-5 h-5 />
@@ -65,7 +65,7 @@ onMounted(() => {
         <div>Session Credit: {{ sessionCredit }}</div>
       </div>
     </div>
-    <div bg-gray-100 p-5 rounded-lg>
+    <div p-5 rounded-lg class="bg-gray-900/10 backdrop-filter backdrop-blur-sm">
       <div v-if="tableIsLoading" op50k italic w-xl>
         <span animate-pulse>Loading table...</span>
       </div>
@@ -75,7 +75,7 @@ onMounted(() => {
 
     <div m-5 space-y-4>
       <button
-        v-if="sessionCredit" bg-gray-100 rounded px-3 py-1 w-30 hover-bg-gray-200 flex items-center
+        v-if="sessionCredit" bg-gray-600 rounded px-3 py-1 w-30 hover-text-gray-300 flex items-center
         @click="startRolling"
       >
         <div i-fluent-emoji:round-pushpin mr-2 />
@@ -83,7 +83,7 @@ onMounted(() => {
       </button>
 
       <button
-        v-else bg-gray-100 rounded px-2 py-1 hover-bg-gray-200 flex items-center
+        v-else bg-gray-600 rounded px-2 py-1 hover-text-gray-300 flex items-center
         @click="sessionStartCredits(true)"
       >
         <div i-fluent-emoji:new-button mr-2 />

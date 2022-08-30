@@ -24,6 +24,15 @@ const startRollingAnimation = async () => {
   signs.map(e => e.loading = true)
 }
 
+const shootConfetti = async () => {
+  interface fnType {
+    default: Function
+    create: Function
+  }
+  const confetti = await import('https://cdn.skypack.dev/canvas-confetti') as fnType
+  confetti.default()
+}
+
 const timeout = (delay: number) => {
   return new Promise(resolve => setTimeout(resolve, delay))
 }
@@ -43,6 +52,12 @@ const stopRolling = async (letters: Array<string>, setCreditFn: () => void) => {
   await timeout(1000)
   signs[2].loading = false
   setCreditFn()
+
+  const { checkWinningRoll } = await import('~/composables/globals')
+  const isWinningRoll = await checkWinningRoll(letters)
+
+  if (isWinningRoll)
+    shootConfetti()
 }
 
 defineExpose({
