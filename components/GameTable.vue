@@ -53,7 +53,7 @@ const stopRolling = async (letters: Array<string>, setCreditFn: () => void) => {
   signs[2].loading = false
   setCreditFn()
 
-  const { checkWinningRoll } = await import('~/composables/globals')
+  const { checkWinningRoll } = await import('../composables/globals.js')
   const isWinningRoll = await checkWinningRoll(letters)
 
   if (isWinningRoll)
