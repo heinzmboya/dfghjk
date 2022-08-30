@@ -2,28 +2,28 @@
 let sessionCredit = $ref(0)
 let userAccount = $ref(0)
 let tableIsLoading = $ref(false)
+let isgameSpinning = $ref(false)
 
-const GameTableRef = ref<{ startRollingAnimation: Function; stopRolling: Function; isSpinning: boolean } | null>(null)
-
-const signs = ref(['C', 'L', 'O'])
+const GameTableRef = ref<{ startRollingAnimation: Function; stopRolling: Function } | null>(null)
 
 const setCredit = (credits) => {
   sessionCredit = credits
+  isgameSpinning = false
 }
 
 const startRolling = async () => {
-  if (GameTableRef.value?.isSpinning)
+  if (isgameSpinning)
     return
 
+  isgameSpinning = true
   GameTableRef.value?.startRollingAnimation()
 
   const data = await $fetch<{ letters: Array<string>; credits: number }>('/api/jackpot', {
     method: 'post',
     body: { spin: true },
   })
-  signs.value = data.letters
 
-  GameTableRef.value?.stopRolling(() => setCredit(data.credits))
+  GameTableRef.value?.stopRolling(data.letters, () => setCredit(data.credits))
 }
 
 async function cashOut() {
@@ -55,32 +55,38 @@ onMounted(() => {
 
 <template>
   <div mx-auto w-xl space-y-5 text-gray-600>
-    <div font-bold flex space-x-20>
+    <div font-bold flex items-center space-x-20>
       <div flex items-center space-x-3>
-        <div i-twemoji:money-bag w-5 h-5 />
+        <div i-fluent-emoji:money-bag w-5 h-5 />
         <div>Account: {{ userAccount }}</div>
       </div>
       <div flex items-center space-x-3>
-        <div i-twemoji:credit-card w-5 h-5 />
+        <div i-fluent-emoji:credit-card w-5 h-5 />
         <div>Session Credit: {{ sessionCredit }}</div>
       </div>
     </div>
-    <div v-if="signs.length" bg-gray-100 p-5 rounded-lg>
+    <div bg-gray-100 p-5 rounded-lg>
       <div v-if="tableIsLoading" op50k italic w-xl>
         <span animate-pulse>Loading table...</span>
       </div>
 
-      <game-table v-else ref="GameTableRef" :signs="signs" />
+      <game-table v-else ref="GameTableRef" />
     </div>
 
     <div m-5 space-y-4>
-      <button v-if="sessionCredit" bg-gray-100 rounded px-3 py-1 w-30 hover-bg-gray-200 flex items-center @click="startRolling">
-        <div i-twemoji:round-pushpin mr-2 />
-        {{ GameTableRef?.isSpinning ? 'rolling...' : 'Roll slots' }}
+      <button
+        v-if="sessionCredit" bg-gray-100 rounded px-3 py-1 w-30 hover-bg-gray-200 flex items-center
+        @click="startRolling"
+      >
+        <div i-fluent-emoji:round-pushpin mr-2 />
+        {{ isgameSpinning ? 'rolling...' : 'Roll slots' }}
       </button>
 
-      <button v-else bg-gray-100 rounded px-2 py-1 hover-bg-gray-200 flex items-center @click="sessionStartCredits(true)">
-        <div i-twemoji:new-button mr-2 />
+      <button
+        v-else bg-gray-100 rounded px-2 py-1 hover-bg-gray-200 flex items-center
+        @click="sessionStartCredits(true)"
+      >
+        <div i-fluent-emoji:new-button mr-2 />
         New Session
       </button>
 
